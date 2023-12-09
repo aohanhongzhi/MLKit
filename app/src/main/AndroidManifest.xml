@@ -46,6 +46,11 @@
             android:exported="false"
             android:theme="@style/CameraScanTheme"/>
 
+        <activity android:name=".barcode.QRCodeScanningNoIntentActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/CameraScanTheme"/>
+
         <activity android:name=".face.FaceDetectionActivity"
             android:screenOrientation="portrait"
             android:exported="false"

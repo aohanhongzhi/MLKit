@@ -1,3 +1,14 @@
+# 实测效果
+
+com.king.mlkit.vision.app.barcode.BarcodeScanningActivity
+
+![Alt text](image.png)
+
+可以同时扫多个码，而且可以同时扫二维码和条形码。效果如下。速度也很不错。
+**但是只能偶尔扫出来，还需要进一步优化下，保证所有的都扫出来。**
+![](Screenshot_2023-12-10-00-47-52-598_com.king.mlkit.vision.app.jpg)
+
+
 # MLKit
 
 [![Download](https://img.shields.io/badge/download-App-blue.svg)](https://raw.githubusercontent.com/jenly1314/MLKit/master/app/release/app-release.apk)

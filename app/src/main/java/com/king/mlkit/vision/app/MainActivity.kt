@@ -34,6 +34,7 @@ import com.king.camera.scan.util.PermissionUtils
 import com.king.mlkit.vision.app.barcode.BarcodeScanningActivity
 import com.king.mlkit.vision.app.barcode.MultipleQRCodeScanningActivity
 import com.king.mlkit.vision.app.barcode.QRCodeScanningActivity
+import com.king.mlkit.vision.app.barcode.QRCodeScanningNoIntentActivity
 import com.king.mlkit.vision.app.face.FaceDetectionActivity
 import com.king.mlkit.vision.app.face.FaceMeshDetectionActivity
 import com.king.mlkit.vision.app.face.MultipleFaceDetectionActivity
@@ -184,6 +185,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onClick(v: View) {
         when (v.id) {
+            R.id.btnQRCodeScanningNoIntent -> startActivityForResult(Intent(this, QRCodeScanningNoIntentActivity::class.java), REQUEST_CODE_SCAN_CODE)
             R.id.btnQRCodeScanning -> startActivityForResult(Intent(this, QRCodeScanningActivity::class.java), REQUEST_CODE_SCAN_CODE)
             R.id.btnMultipleQRCodeScanning -> startActivity(MultipleQRCodeScanningActivity::class.java)
             R.id.btnBarcodeScanning -> startActivity(BarcodeScanningActivity::class.java)
