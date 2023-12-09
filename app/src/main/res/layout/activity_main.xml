@@ -10,6 +10,17 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/btnBarcodeScanning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="Multiple Barcode/QRcode scanning"
+            style="@style/OnClick"/>
+
+        <Button
             android:id="@+id/btnQRCodeScanningNoIntent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,16 +53,7 @@
             android:text="Multiple QRCode scanning"
             style="@style/OnClick"/>
 
-        <Button
-            android:id="@+id/btnBarcodeScanning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:text="Multiple Barcode/QRcode scanning"
-            style="@style/OnClick"/>
+
         <Button
             android:id="@+id/btnQRCodeRecognitionFromImage"
             android:layout_width="match_parent"
