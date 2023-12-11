@@ -46,6 +46,8 @@ import com.king.mlkit.vision.app.pose.PoseDetectionActivity
 import com.king.mlkit.vision.app.segmentation.SelfieSegmentationActivity
 import com.king.mlkit.vision.app.text.TextRecognitionActivity
 import com.king.mlkit.vision.barcode.BarcodeDecoder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -58,6 +60,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //放在其他库初始化前，用于崩溃日志获取的
+        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
+        log.info("hello world")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -103,45 +108,49 @@ class MainActivity : AppCompatActivity() {
         data?.let {
             try {
                 val srcBitmap = MediaStore.Images.Media.getBitmap(contentResolver, it)
-                BarcodeDecoder.process(srcBitmap, object : Analyzer.OnAnalyzeListener<List<Barcode>?> {
-                    override fun onSuccess(result: List<Barcode>) {
-                        if (result.isNotEmpty()) {
-                            val buffer = StringBuilder()
-                            // 识别成功，在图片上框出结果
-                            val bitmap = srcBitmap.drawRect { canvas, paint ->
-                                for ((index, barcode) in result.withIndex()) {
-                                    buffer.append("[$index] ").append(barcode.displayValue)
-                                        .append("\n")
-                                    barcode.boundingBox?.let { box ->
-                                        canvas.drawRect(box, paint)
+                BarcodeDecoder.process(
+                    srcBitmap,
+                    object : Analyzer.OnAnalyzeListener<List<Barcode>?> {
+                        override fun onSuccess(result: List<Barcode>) {
+                            if (result.isNotEmpty()) {
+                                val buffer = StringBuilder()
+                                // 识别成功，在图片上框出结果
+                                val bitmap = srcBitmap.drawRect { canvas, paint ->
+                                    for ((index, barcode) in result.withIndex()) {
+                                        buffer.append("[$index] ").append(barcode.displayValue)
+                                            .append("\n")
+                                        barcode.boundingBox?.let { box ->
+                                            canvas.drawRect(box, paint)
+                                        }
                                     }
                                 }
+
+                                val config =
+                                    AppDialogConfig(getContext(), R.layout.barcode_result_dialog)
+                                config.setContent(buffer)
+                                    .setHideCancel(true)
+                                    .setOnClickConfirm {
+                                        AppDialog.INSTANCE.dismissDialog()
+                                    }
+                                val imageView = config.getView<ImageView>(R.id.ivDialogContent)
+                                imageView.setImageBitmap(bitmap)
+                                AppDialog.INSTANCE.showDialog(config)
+                            } else {
+                                LogUtils.d("result is null")
+                                Toast.makeText(getContext(), "result is null", Toast.LENGTH_SHORT)
+                                    .show()
                             }
-
-                            val config =
-                                AppDialogConfig(getContext(), R.layout.barcode_result_dialog)
-                            config.setContent(buffer)
-                                .setHideCancel(true)
-                                .setOnClickConfirm {
-                                    AppDialog.INSTANCE.dismissDialog()
-                                }
-                            val imageView = config.getView<ImageView>(R.id.ivDialogContent)
-                            imageView.setImageBitmap(bitmap)
-                            AppDialog.INSTANCE.showDialog(config)
-                        } else {
-                            LogUtils.d("result is null")
-                            Toast.makeText(getContext(), "result is null", Toast.LENGTH_SHORT)
-                                .show()
                         }
-                    }
 
-                    override fun onFailure(e: Exception?) {
-                        LogUtils.d("onFailure")
-                        Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show()
-                    }
+                        override fun onFailure(e: Exception?) {
+                            LogUtils.d("onFailure")
+                            Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show()
+                        }
 
-                    // 如果指定具体的识别条码类型，速度会更快
-                }, if (isQrCode) Barcode.FORMAT_QR_CODE else Barcode.FORMAT_ALL_FORMATS)
+                        // 如果指定具体的识别条码类型，速度会更快
+                    },
+                    if (isQrCode) Barcode.FORMAT_QR_CODE else Barcode.FORMAT_ALL_FORMATS
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show()
@@ -185,8 +194,20 @@ class MainActivity : AppCompatActivity() {
 
     fun onClick(v: View) {
         when (v.id) {
-            R.id.btnQRCodeScanningNoIntent -> startActivityForResult(Intent(this, QRCodeScanningNoIntentActivity::class.java), REQUEST_CODE_SCAN_CODE)
-            R.id.btnQRCodeScanning -> startActivityForResult(Intent(this, QRCodeScanningActivity::class.java), REQUEST_CODE_SCAN_CODE)
+            R.id.btnQRCodeScanningNoIntent -> startActivityForResult(
+                Intent(
+                    this,
+                    QRCodeScanningNoIntentActivity::class.java
+                ), REQUEST_CODE_SCAN_CODE
+            )
+
+            R.id.btnQRCodeScanning -> startActivityForResult(
+                Intent(
+                    this,
+                    QRCodeScanningActivity::class.java
+                ), REQUEST_CODE_SCAN_CODE
+            )
+
             R.id.btnMultipleQRCodeScanning -> startActivity(MultipleQRCodeScanningActivity::class.java)
             R.id.btnBarcodeScanning -> startActivity(BarcodeScanningActivity::class.java)
             R.id.btnQRCodeRecognitionFromImage -> pickPhotoClicked(true)

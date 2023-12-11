@@ -24,12 +24,16 @@ import com.king.camera.scan.CameraScan
 import com.king.mlkit.vision.app.R
 import com.king.mlkit.vision.app.drawRect
 import com.king.mlkit.vision.barcode.BarcodeCameraScanActivity
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * 条形码/二维码扫描示例
  * @author <a href="mailto:jenly1314@gmail.com">Jenly</a>
  */
 class BarcodeScanningActivity : BarcodeCameraScanActivity() {
+
+    val log: Logger = LoggerFactory.getLogger(BarcodeScanningActivity::class.java)
 
     override fun initCameraScan(cameraScan: CameraScan<MutableList<Barcode>>) {
         super.initCameraScan(cameraScan)
@@ -44,6 +48,8 @@ class BarcodeScanningActivity : BarcodeCameraScanActivity() {
         val bitmap = result.bitmap?.drawRect { canvas, paint ->
             for ((index, data) in result.result.withIndex()) {
                 buffer.append("[$index] ").append(data.displayValue).append("\n")
+                log.info("扫描结果： [$index] ${data.displayValue}")
+                // TODO 遍历条形码或者二维码，只要符合要求就可以直接自动提交了。
                 data.boundingBox?.let { box ->
                     canvas.drawRect(box, paint)
                 }
